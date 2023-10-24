@@ -71,7 +71,7 @@ public class HTTPConnection {
     }
 
     /**
-     * Sends an HTTP POST request.
+     * Sends an HTTP GET request.
      * @param payload Any data payloads to send
      * @return The response of this request
      */
