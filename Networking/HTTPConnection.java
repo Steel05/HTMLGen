@@ -10,15 +10,15 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class HTTPConnection {
-    private static final String GET = "GET";
-    private static final String HEAD = "HEAD";
-    private static final String POST = "POST";
-    private static final String PUT = "PUT";
-    private static final String DELETE = "DELETE";
-    private static final String CONNECT = "CONNECT";
-    private static final String OPTIONS = "OPTIONS";
-    private static final String TRACE = "TRACE";
-    private static final String PATCH = "PATCH";
+    public static final String GET = "GET";
+    public static final String HEAD = "HEAD";
+    public static final String POST = "POST";
+    public static final String PUT = "PUT";
+    public static final String DELETE = "DELETE";
+    public static final String CONNECT = "CONNECT";
+    public static final String OPTIONS = "OPTIONS";
+    public static final String TRACE = "TRACE";
+    public static final String PATCH = "PATCH";
 
     private String url;
     private int id;
@@ -71,19 +71,11 @@ public class HTTPConnection {
     }
 
     /**
-     * Sends an HTTP GET request.
-     * @param payload Any data payloads to send
-     * @return The response of this request
-     */
-    public HTTPResponse get(){
-        return null;
-    }
-    /**
      * Sends an HTTP POST request.
      * @param payload Any data payloads to send
      * @return The response of this request
      */
-    public HTTPResponse post(Map<String, String> payload){
+    public HTTPResponse sendRequest(String requestMethod, Map<String, String> payload){
         try {
             connection.setRequestMethod(POST);
         } catch (ProtocolException e) {

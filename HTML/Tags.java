@@ -2,6 +2,7 @@ package HTML;
 
 import HTML.Components.BaseComponents.Header;
 import HTML.Components.BaseComponents.HorizontalRule;
+import HTML.Components.BaseComponents.Image;
 import HTML.Components.BaseComponents.Paragraph;
 import HTML.Components.BaseComponents.RawText;
 
@@ -36,5 +37,11 @@ public class Tags {
     }
     public static Paragraph p(String text){
         return new Paragraph(text);
+    }
+    public static Image img(String source){
+        return new Image(source);
+    }
+    public static Image img(String source, String alt){
+        return new Image(source, alt);
     }
 }

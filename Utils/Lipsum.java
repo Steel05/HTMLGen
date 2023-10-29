@@ -31,7 +31,7 @@ public class Lipsum {
             params.put("start", "yes");
             params.put("generate", "Generate Lorem Ipsum");
 
-            HTTPResponse response = connection.post(params);
+            HTTPResponse response = connection.sendRequest(HTTPConnection.POST, params);
 
             Matcher matcher = Pattern.compile(PARSING_REGEX).matcher(response.getContent());
             
