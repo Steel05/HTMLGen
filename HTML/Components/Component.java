@@ -1,18 +1,20 @@
 package HTML.Components;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import CSS.CSSClass;
 import Exceptions.HierarchyException;
 import HTML.ComponentChecker;
+import Interfaces.Writable;
 
-public abstract class Component {
+public abstract class Component implements Writable {
     private Component parent = null;
     private ArrayList<Component> children = new ArrayList<>();
 
-    //private String cssClass;
-
+    private final String tag;
     private int childId;
-    private String tag;
+    private HashMap<String, CSSClass> cssClasses = new HashMap<>();
 
     protected Component(String tag){
         this.tag = tag;
@@ -24,7 +26,7 @@ public abstract class Component {
      * Gets the parent of this component.
      * @return The parent component
      */
-    public Component getParent(){
+    public final Component getParent(){
         return parent;
     }
     /**
@@ -40,7 +42,7 @@ public abstract class Component {
      * console and the parent component of this component will not be changed.
      * @param parent The component for this component to become the child of
      */
-    protected void registerParent(Component parent, int id){
+    protected final void registerParent(Component parent, int id){
         try{
             if (this.parent != null){
                 throw new HierarchyException(this);
@@ -71,7 +73,7 @@ public abstract class Component {
      * @param child The child component
      * @return This component to allow for call chaining
      */
-    public Component addChild(Component child){
+    public final Component addChild(Component child){
         children.add(child);
         childId = children.size() - 1;
         child.registerParent(this, children.size() - 1);
@@ -82,7 +84,7 @@ public abstract class Component {
      * 
      * @param children The components to add
      */
-    public void addChildren(Component... children){
+    public final void addChildren(Component... children){
         for (Component comp : children){
             addChild(comp);
         }
@@ -92,8 +94,34 @@ public abstract class Component {
      * @param id The id of the child to remove
      * @return The removed child component
      */
-    public Component removeChild(int id){
+    public final Component removeChild(int id){
         return children.remove(id);
+    }
+
+    /**
+     * Checks if the component has been assigned a CSS class.
+     * @return True if this component has at least 1 assigned class
+     */
+    public final boolean assignedClass(){
+        return cssClasses.size() != 0;
+    }
+    /**
+     * Retrieves all the classes assigned to this component.
+     * @return An array of all the classes assigned to this component
+     */
+    public final CSSClass[] getClasses(){
+        return cssClasses.values().toArray(new CSSClass[cssClasses.size()]);
+    }
+    /**
+     * Adds the classes to the component.
+     * @param cssClasses The classes to add the component
+     * @return This component so that inlining this statement is valid
+     */
+    public final Component addCSSClasses(CSSClass... cssClasses){
+        for (CSSClass cclass : cssClasses){
+            this.cssClasses.put(cclass.getName(), cclass);
+        }
+        return this;
     }
 
     /**
@@ -105,16 +133,40 @@ public abstract class Component {
     }
 
     /**
+     * Constructs the {@code class="..."} decleration of the HTML tag. 
+     * <p>If this component has no assigned class, this function will return an empty string.
+     * <p>If this component has at least one assigned class, it will return in format {@code ' class="..."''},
+     * with the a space fixed to the beginning of the string.
+     * @return The appropriate class modifier
+     */
+    protected final String constructCSSClassString(){
+        if (!this.assignedClass()){
+            return "";
+        }
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(" class=\"");
+        for (CSSClass cclass : cssClasses.values()){
+            builder.append(cclass.getName() + " ");
+        }
+
+        builder.deleteCharAt(builder.length() - 1);
+        builder.append("\"");
+        return builder.toString();
+    }
+
+    /**
      * Converts this component into valid HTML code.
      * @return This component as HTML code
      */
     public String write(){
-        String out = String.format("<%s>\n", tag);
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("<%s%s>\n", tag, constructCSSClassString()));
         for (Component child : children){
-            out += child.write() + "\n";
+            builder.append(child.write() + "\n");
         }
-        out += String.format("</%s>", tag);
-        return out;
+        builder.append(String.format("</%s>", tag));
+        return builder.toString();
     }
 
     @Override

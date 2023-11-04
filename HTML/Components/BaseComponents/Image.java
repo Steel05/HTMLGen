@@ -19,11 +19,10 @@ public class Image extends Component {
 
     @Override
     public String write(){
-        if (!alt.isBlank()){
-            return String.format("<img src=\"%s\" alt=\"%s\">", source, alt);
+        if (alt.isBlank() || alt.isEmpty()){
+            return String.format("<img src=\"%s\"%s>", source, constructCSSClassString());
         }
-        else{
-            return String.format("<img src=\"%s\">", null);
-        }
+
+        return String.format("<img src=\"%s\"%s alt=\"%s\">", source, constructCSSClassString(), alt);
     }
 }

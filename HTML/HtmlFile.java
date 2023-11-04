@@ -4,26 +4,53 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.util.Optional;
 
-import Exceptions.FileExtensionException;
-import Exceptions.FileNameException;
+import CSS.CSSFile;
 import HTML.Components.Component;
 import HTML.Components.BaseComponents.Body;
 import HTML.Components.BaseComponents.Head;
 import HTML.Components.BaseComponents.Html;
+import HTML.Components.BaseComponents.RawText;
+import Interfaces.Savable;
+import Utils.FileUtils;
 
 /**
  * Represents an HTML file in memory.
  */
-public class HtmlFile{
-    private Html htmlComponent;
-    private Component body;
+public class HtmlFile implements Savable{
+    private final Component htmlComponent;
+    private final Component head;
+    private final Component body;
 
-    public HtmlFile(){
+    private boolean usesCSS = false;
+    private CSSFile cssFile = null;
+
+    public HtmlFile(String title){
         htmlComponent = new Html();
         body = new Body();
-        htmlComponent.addChildren(new Head(), body);
+        head = new Head();
+        htmlComponent.addChildren(head, body);
+
+        head.addChild(new RawText(String.format("<title>%s</title>", title)));
     }
 
+    /**
+     * Binds a constructs a CSS file and binds it to this HTML file.
+     * <p>NOTE: The user does not need to call {@code save()} on the returned
+     * file. The file is saved automatically with the name {@code styles.css} when this file is saved.
+     * @return The newly constructed CSS file
+     */
+    public CSSFile createCSSFile(){
+        usesCSS = true;
+        cssFile = new CSSFile();
+        return cssFile;
+    }
+
+    public Component getHTMLComponent(){
+        return htmlComponent;
+    }
+    public Component getHeadComponent(){
+        return head;
+    }
     public Component getBodyComponent(){
         return body;
     }
@@ -38,12 +65,26 @@ public class HtmlFile{
             return;
         }
 
-        Optional<String> saveName = parseFileName(fileName);
+        if (usesCSS){
+            String refLink;
+            Optional<String> cssName = cssFile.getSaveName();
+
+            if (cssName.isEmpty()){
+                cssFile.save("styles.css");
+                refLink = "./styles.css";
+            }
+            else{
+                refLink = "./" + cssName.get();
+            }
+        
+            head.addChild(new RawText(String.format("<link rel=\"stylesheet\" href=\"%s\">", refLink)));
+        }
+
+        Optional<String> saveName = FileUtils.parseFileName(fileName, "html");
 
         if (saveName.isEmpty()){
             return;
         }
-
 
         try{
             writeFile(saveName.get());
@@ -55,6 +96,11 @@ public class HtmlFile{
         }
     }
 
+    /**
+     * Writes the contents to a file with the appropriate file name.
+     * @param fileName The name of the file to write to
+     * @throws Exception
+     */
     private void writeFile(String fileName) throws Exception{
         DataOutputStream file;
 
@@ -68,28 +114,5 @@ public class HtmlFile{
         }
 
         file.close();
-    }
-
-    private Optional<String> parseFileName(String fileName){
-        String[] fileNameParts = fileName.split("\\.");
-
-        try{
-            if (fileName.isBlank() || fileName.isEmpty()){
-                throw new FileNameException(fileName);
-            }
-            else if (fileNameParts.length > 2){
-                throw new FileExtensionException(fileName);
-            }
-            else if (fileNameParts.length == 2 && !fileNameParts[1].equals("html")){
-                throw new FileExtensionException(fileName);
-            }
-        }
-        catch(Exception e){
-            System.out.println("Error saving file");
-            e.printStackTrace();
-            return Optional.empty();
-        }
-
-        return Optional.of(fileNameParts[0]+".html");
     }
 }

@@ -1,3 +1,6 @@
+import CSS.CSSFile;
+import CSS.CSSRule;
+import CSS.CSSUnit;
 import HTML.HtmlFile;
 import HTML.Tags;
 import HTML.Components.Component;
@@ -10,8 +13,9 @@ public class Generator {
     }
 
     public static void main(String[] args){
-        HtmlFile file = new HtmlFile();
+        HtmlFile file = new HtmlFile("Sample Output");
         Component baseComp = file.getBodyComponent();
+        CSSFile css = file.createCSSFile();
 
         baseComp.addChildren(Tags.h1("Sample Output"), Tags.hr(), Tags.h2("Hello World!"), Tags.hr());
 
@@ -20,7 +24,10 @@ public class Generator {
             baseComp.addChildren(Tags.p(para), Tags.hr());
         }
 
-        baseComp.addChildren(Tags.h3("Marshmallows!"), Tags.img(Constants.marshmallowURL));
+        baseComp.addChildren(Tags.h3("Marshmallows!"), 
+            Tags.img(Constants.marshmallowURL).addCSSClasses(css.createClass(".img").addRules(
+                new CSSRule("width", "350", CSSUnit.px), 
+                new CSSRule("height", "350px"))));
 
         file.save("index.html");
         ConnectionChecker.disposeAll();

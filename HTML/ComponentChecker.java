@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 import HTML.Components.Component;
 
 /**
- * Manages all components, checks for free
+ * Manages all components
  */
 public class ComponentChecker {
     private static ArrayList<Component> components = new ArrayList<>();
@@ -21,9 +21,7 @@ public class ComponentChecker {
     }
 
     /**
-     * Checks to see if any components are free. If any are found, a window will appear informing the user which
-     * components do not have parents. The window will ask the user if they would like to save the file anyway.
-     * <p> If no free components were found, this function will return true.
+     * Checks for any components who have no parent.
      * @return If the user would like to continue with saving the file
      */
     public static ArrayList<Component> checkForFreeComponents(){
@@ -38,6 +36,10 @@ public class ComponentChecker {
         return freeComponents;
     }
 
+    /**
+     * Confirms if the file is clear to save 
+     * @return
+     */
     public static boolean clearToSave(){
         ArrayList<Component> free = checkForFreeComponents();
 
