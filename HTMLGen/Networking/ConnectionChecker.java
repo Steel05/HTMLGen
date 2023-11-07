@@ -13,7 +13,7 @@ public class ConnectionChecker {
      * Registers a new connection to be managed.
      * @param connection The new connection
      */
-    public static void registerConnection(HTTPConnection connection){
+    protected static void registerConnection(HTTPConnection connection){
         totalRegistered++;
         connections.add(connection);
         connection.registerId(totalRegistered);
