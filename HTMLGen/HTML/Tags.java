@@ -1,5 +1,6 @@
 package HTML;
 
+import HTML.Components.BaseComponents.Division;
 import HTML.Components.BaseComponents.Header;
 import HTML.Components.BaseComponents.HorizontalRule;
 import HTML.Components.BaseComponents.Image;
@@ -43,5 +44,8 @@ public class Tags {
     }
     public static Image img(String source, String alt){
         return new Image(source, alt);
+    }
+    public static Division div(){
+        return new Division();
     }
 }
