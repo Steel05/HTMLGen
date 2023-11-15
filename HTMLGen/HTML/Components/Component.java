@@ -69,11 +69,11 @@ public abstract class Component implements Writable {
     }
 
     /**
-     * Adds a child of to this component.
+     * Adds a child to this component.
      * @param child The child component
      * @return This component to allow for call chaining
      */
-    public final Component addChild(Component child){
+    public Component addChild(Component child){
         children.add(child);
         childId = children.size() - 1;
         child.registerParent(this, children.size() - 1);
@@ -81,13 +81,15 @@ public abstract class Component implements Writable {
         return this;
     }
     /**
-     * 
+     * Adds all provided components to this component as children
      * @param children The components to add
      */
-    public final void addChildren(Component... children){
+    public final Component addChildren(Component... children){
         for (Component comp : children){
-            addChild(comp);
+            this.addChild(comp);
         }
+
+        return this;
     }
     /**
      * Removes a child component.
