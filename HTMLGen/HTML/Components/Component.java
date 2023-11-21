@@ -133,6 +133,13 @@ public abstract class Component implements Writable {
     public String getTag(){
         return tag;
     }
+    /**
+     * Gets all the child components of this component.
+     * @return All child components
+     */
+    public Component[] getChildren(){
+        return children.toArray(new Component[children.size()]);
+    }
 
     /**
      * Constructs the {@code class="..."} decleration of the HTML tag. 
